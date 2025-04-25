@@ -2,18 +2,19 @@
 using namespace std;
 
 const int MAX = 100;
+const int INF = 999; // A large number representing no connection
 
 struct Edge {
     int u, v, w;
 };
 
-Edge edges[MAX];
+Edge edges[MAX * MAX]; // Edge list extracted from matrix
 int parent[MAX];
-int n, e;
+int n, edgeCount = 0;
 
 void sortEdges() {
-    for (int i = 0; i < e - 1; i++) {
-        for (int j = i + 1; j < e; j++) {
+    for (int i = 0; i < edgeCount - 1; i++) {
+        for (int j = i + 1; j < edgeCount; j++) {
             if (edges[i].w > edges[j].w) {
                 Edge temp = edges[i];
                 edges[i] = edges[j];
@@ -38,7 +39,7 @@ void kruskal() {
     sortEdges();
 
     cout << "\nMinimum Spanning Tree:\n";
-    for (int i = 0; i < e; i++) {
+    for (int i = 0; i < edgeCount; i++) {
         int u = edges[i].u;
         int v = edges[i].v;
         int w = edges[i].w;
@@ -57,17 +58,27 @@ void kruskal() {
 }
 
 int main() {
+    int adj[MAX][MAX];
+
     cout << "Enter number of departments (nodes): ";
     cin >> n;
-    cout << "Enter number of paths (edges): ";
-    cin >> e;
 
-    cout << "Enter each edge as: from to distance\n";
-    for (int i = 0; i < e; i++) {
-        cin >> edges[i].u >> edges[i].v >> edges[i].w;
+    cout << "Enter adjacency matrix (enter " << INF << " if no path):\n";
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> adj[i][j];
+
+            // Avoid duplicates in undirected graph
+            if (i < j && adj[i][j] != INF) {
+                edges[edgeCount].u = i;
+                edges[edgeCount].v = j;
+                edges[edgeCount].w = adj[i][j];
+                edgeCount++;
+            }
+        }
     }
 
     kruskal();
 
-    return 0;
+    return 0;
 }
